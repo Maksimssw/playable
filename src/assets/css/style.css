@@ -1,0 +1,37 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: #313030;
+  font-size: 4vmin;
+}
+
+body {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#plinko {
+  margin: 0 auto;
+}
+
+.wrapper {
+  display: grid;
+  justify-content: center;
+  padding-top: 30px;
+}
+
+.wrapper__button {
+  width: 100px;
+  height: 100px;
+  background: rgb(112, 60, 60);
+  border-radius: 50%;
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+}/*# sourceMappingURL=style.css.map */
