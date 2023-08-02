@@ -24,6 +24,7 @@ plinko.map(basket);
 const playButton = document.querySelector('.wrapper__button')
 
 playButton.addEventListener('click', () => {
+  plinko.balance(0)
   plinko.add(xy[0])
 })
 

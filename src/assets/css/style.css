@@ -34,4 +34,21 @@ body {
   color: white;
   font-size: 2rem;
   font-weight: 700;
+}
+
+.content {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  color: white;
+}
+
+.content__text {
+  font-size: 24px;
+}
+
+.content__balance {
+  font-size: 28px;
+  color: green;
+  font-weight: 700;
 }/*# sourceMappingURL=style.css.map */

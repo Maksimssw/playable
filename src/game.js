@@ -67,11 +67,13 @@ export function Plinko(element) {
   /*--------------------------
   Game
   --------------------------*/
+  const balanceText = document.querySelector('.content__balance')
 
   let radius;
   let gap;
   let mapGap;
   let count = 0;
+  let bet = 10
 
   function collisionStart(event) {
     const pairs = event.pairs;
@@ -80,6 +82,7 @@ export function Plinko(element) {
       const bodyB = pairs[i].bodyB;
       if (bodyA.label === "point") Splash(bodyA);
       if (bodyA.label === "basket" && bodyB.label === "particle") {
+        balance(bodyA.motion)
         RemoveParticle(bodyB, bodyA);
       }
       if (bodyB.label === "particle" && bodyA.label === "basket-border") {
@@ -94,6 +97,11 @@ export function Plinko(element) {
       x: basketBorder.side === "right" ? -3 : 3,
       y: 3
     });
+  }
+
+  function balance(bonus) {
+    const balance = balanceText.textContent.replace(/D/g, '')
+    console.log(balance)
   }
 
   function Splash(body) {
@@ -167,6 +175,7 @@ export function Plinko(element) {
     const options = {
       isSensor: true,
       isStatic: true,
+      bonus: text
     };
 
     const rightOptions = {
@@ -183,6 +192,7 @@ export function Plinko(element) {
 
     const body = Bodies.rectangle(x, y, gap, gap, options);
     body.label = "basket";
+    body.motion = text
     body.index = index;
 
     const right = Bodies.rectangle(
@@ -308,6 +318,8 @@ export function Plinko(element) {
   return {
     map,
     add,
-    clear
+    clear,
+    balance,
+    bet
   };
 }
