@@ -4,51 +4,76 @@
   padding: 0;
 }
 
-html, body {
-  background-color: #313030;
-  font-size: 4vmin;
-}
-
+html,
 body {
-  display: grid;
-  justify-items: center;
-  align-items: center;
+  color: white;
+  overflow: hidden;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
   height: 100vh;
+  width: 100%;
+  font-size: 3.5vmin;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 
-#plinko {
-  margin: 0 auto;
+#app {
+  width: 100%;
+  height: 100%;
 }
-
-.wrapper {
-  display: grid;
-  justify-content: center;
-  padding-top: 30px;
-}
-
-.wrapper__button {
-  width: 100px;
-  height: 100px;
-  background: rgb(112, 60, 60);
-  border-radius: 50%;
-  color: white;
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.content {
+#app .app-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: 1.5rem;
   position: fixed;
-  top: 30px;
-  left: 30px;
-  color: white;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: radial-gradient(ellipse at top, #2290ae, #17275b);
 }
-
-.content__text {
-  font-size: 24px;
+#app .app-wrapper:before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 520px;
+  width: 520px;
+  background: #7b159e;
+  border-radius: 100%;
+  transform: translate(50%, 50%);
+  filter: blur(100px);
+  opacity: 0.5;
+  z-index: -1;
 }
-
-.content__balance {
-  font-size: 28px;
-  color: green;
-  font-weight: 700;
+#app .app-wrapper:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  background: url("../images/confetti.png") no-repeat top/cover;
+}
+#app .app-wrapper .money {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 20%;
+  z-index: -1;
+  background: url("../images/coins_bottom.png") no-repeat top/cover;
 }/*# sourceMappingURL=style.css.map */

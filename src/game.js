@@ -38,9 +38,9 @@ export function Plinko(element) {
     resizeTo: element,
     width: width,
     height: width,
-    antialias: true,
-    resolution: 2,
-    autoDensity: true
+    transparent: true,
+    resolution: window.devicePixelRatio || 1,
+    autoDensity: true,
   });
 
   element.appendChild(app.view);
@@ -67,13 +67,13 @@ export function Plinko(element) {
   /*--------------------------
   Game
   --------------------------*/
-  const balanceText = document.querySelector('.content__balance')
+  const balanceText = document.querySelector(".content__balance");
 
   let radius;
   let gap;
   let mapGap;
   let count = 0;
-  let bet = 10
+  let bet = 10;
 
   function collisionStart(event) {
     const pairs = event.pairs;
@@ -82,7 +82,7 @@ export function Plinko(element) {
       const bodyB = pairs[i].bodyB;
       if (bodyA.label === "point") Splash(bodyA);
       if (bodyA.label === "basket" && bodyB.label === "particle") {
-        balance(bodyA.motion)
+        balance(bodyA.motion);
         RemoveParticle(bodyB, bodyA);
       }
       if (bodyB.label === "particle" && bodyA.label === "basket-border") {
@@ -95,13 +95,13 @@ export function Plinko(element) {
     if (particle.index !== basketBorder.index) return;
     Body.setVelocity(particle, {
       x: basketBorder.side === "right" ? -3 : 3,
-      y: 3
+      y: 3,
     });
   }
 
   function balance(bonus) {
-    const balance = balanceText.textContent.replace(/D/g, '')
-    console.log(balance)
+    const balance = balanceText.textContent.replace(/D/g, "");
+    console.log(balance);
   }
 
   function Splash(body) {
@@ -124,12 +124,12 @@ export function Plinko(element) {
 
   function Particle(x, y, r, index) {
     const options = {
-      restitution: 1,
-      friction: 0,
-      frictionAir: 0.04,
-      collisionFilter: {
-        group: -1
-      }
+      estitution: 0.3,
+        friction: 0.3,
+        frictionAir: 0.01,
+        collisionFilter: {
+          group: -1,
+        },
     };
 
     const body = Bodies.circle(x, y, r, options);
@@ -137,10 +137,8 @@ export function Plinko(element) {
     body.index = index + 2;
     Composite.add(engine.world, body);
 
-    const colors = [
-      "FFFFFF",
-    ];
-    const color = colors[Math.ceil(Math.random() * colors.length - 1)];
+    const color ="FFFFFF";
+    
 
     const graphics = new PIXI.Graphics();
     graphics.beginFill(color);
@@ -150,13 +148,13 @@ export function Plinko(element) {
 
     sceneObjects.push({
       body: body,
-      sprite: graphics
+      sprite: graphics,
     });
   }
 
   function Point(x, y, r) {
     const options = {
-      isStatic: true
+      isStatic: true,
     };
 
     const body = Bodies.circle(x, y, r, options);
@@ -175,24 +173,24 @@ export function Plinko(element) {
     const options = {
       isSensor: true,
       isStatic: true,
-      bonus: text
+      bonus: text,
     };
 
     const rightOptions = {
       isSensor: true,
       isStatic: true,
-      angle: 180 / 2
+      angle: 180 / 2,
     };
 
     const leftOptions = {
       isSensor: true,
       isStatic: true,
-      angle: (180 / 2) * -1
+      angle: (180 / 2) * -1,
     };
 
     const body = Bodies.rectangle(x, y, gap, gap, options);
     body.label = "basket";
-    body.motion = text
+    body.motion = text;
     body.index = index;
 
     const right = Bodies.rectangle(
@@ -219,14 +217,18 @@ export function Plinko(element) {
 
     Composite.add(engine.world, [body, left, right]);
 
-    const textureBasket = await PIXI.Assets.load(require(`@/assets/images/boxes/${text}.png`));
-    const basket = PIXI.Sprite.from(textureBasket);
-    basket.x = x;
-    basket.y = y;
-    basket.width = radius * 5.2;
-    basket.height = radius * 3.5;
-    basket.anchor.set(0.5);
-    app.stage.addChild(basket);
+    if (text != undefined) {
+      const textureBasket = await PIXI.Assets.load(
+        require(`@/assets/images/boxes/${text}.png`)
+      );
+      const basket = PIXI.Sprite.from(textureBasket);
+      basket.x = x;
+      basket.y = y;
+      basket.width = radius * 5.2;
+      basket.height = radius * 3.5;
+      basket.anchor.set(0.5);
+      app.stage.addChild(basket);
+    }
   }
 
   function HollBall() {
@@ -240,7 +242,7 @@ export function Plinko(element) {
   function Border(x, y, side) {
     const options = {
       isStatic: true,
-      angle: side === "right" ? (180 / 2) * -1 : 180 / 2
+      angle: side === "right" ? (180 / 2) * -1 : 180 / 2,
     };
 
     const border = Bodies.rectangle(
@@ -268,7 +270,7 @@ export function Plinko(element) {
     radius = width / rows.length / 8;
     mapGap = 3;
     gap = radius * 2 * mapGap;
-    HollBall()
+    HollBall();
 
     let col = 3;
     const increment = 1;
@@ -320,6 +322,6 @@ export function Plinko(element) {
     add,
     clear,
     balance,
-    bet
+    bet,
   };
 }

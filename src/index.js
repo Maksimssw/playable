@@ -2,17 +2,17 @@ import { Plinko } from "./game";
 import './assets/css/style.css'
 
 const basket = [
-  2,
-  1.5,
-  1.4,
-  0.9,
+  260,
+  43,
+  37,
+  7,
   0.4,
   0.2,
   0.4,
-  0.9,
-  1.4,
-  1.5,
-  2,
+  7,
+  37,
+  43,
+  260,
 ];
 
 const xy = [1.02];
@@ -25,12 +25,5 @@ const playButton = document.querySelector('.wrapper__button')
 
 playButton.addEventListener('click', () => {
   plinko.balance(0)
-  plinko.add(xy[0])
+  plinko.add(1.04)
 })
-
-// for (let i = 0; i < basket.length; i++) {
-//   // setTimeout(() => {
-//   //   plinko.add(i);
-//   // }, 300 * i);
-//   plinko.add(i);
-// }
