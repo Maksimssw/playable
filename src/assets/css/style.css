@@ -2,6 +2,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  border: none;
+  outline: none;
 }
 
 html,
@@ -23,17 +25,36 @@ body {
   -webkit-user-select: none;
   -ms-user-select: none;
 }
+@media (max-height: 650px) {
+  html,
+  body {
+    font-size: 3.4vmin;
+  }
+}
+@media only screen and (min-device-width: 820px) and (max-device-width: 1080px) {
+  html,
+  body {
+    font-size: 2.6vmin;
+  }
+}
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  html,
+  body {
+    font-size: 2.6vmin;
+  }
+}
 
 #app {
   width: 100%;
   height: 100%;
+  padding: 30px;
 }
 #app .app-wrapper {
+  gap: 1rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   flex-direction: column;
-  position: relative;
   padding-bottom: 1.5rem;
   position: fixed;
   left: 0;
@@ -41,7 +62,23 @@ body {
   width: 100%;
   height: 100%;
   z-index: 1;
-  background: radial-gradient(ellipse at top, #2290ae, #17275b);
+  background: radial-gradient(ellipse at top, #2290ae, #0e1b44);
+}
+#app .app-wrapper .app-bg {
+  position: fixed;
+  top: 5rem;
+  left: -20px;
+  width: 120%;
+  opacity: 0.1;
+  z-index: -1;
+  transform: rotate(-45deg);
+}
+#app .app-wrapper .logo {
+  position: fixed;
+  top: 15vh;
+  right: -20px;
+  width: 10rem;
+  transform: rotate(-90deg);
 }
 #app .app-wrapper:before {
   content: "";
@@ -67,6 +104,18 @@ body {
   z-index: -1;
   background: url("../images/confetti.png") no-repeat top/cover;
 }
+#app .app-wrapper .header {
+  background: rgba(23, 39, 91, 0.9);
+  padding: 4px;
+}
+#app .app-wrapper .header-text {
+  font-size: 1.4rem;
+}
+#app .app-wrapper .header-balance {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: rgb(78, 199, 78);
+}
 #app .app-wrapper .money {
   position: absolute;
   bottom: 0;
@@ -76,4 +125,149 @@ body {
   height: 20%;
   z-index: -1;
   background: url("../images/coins_bottom.png") no-repeat top/cover;
+}
+#app .app-wrapper .lines {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: rgba(23, 39, 91, 0.6);
+  border-radius: 3px;
+  overflow: hidden;
+}
+#app .app-wrapper .lines-info {
+  position: relative;
+  padding: 0.4rem;
+  display: grid;
+  text-align: center;
+  gap: 2px;
+  font-weight: 600;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  margin-bottom: 0.5px;
+}
+#app .app-wrapper .lines-info::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+#app .app-wrapper .lines-span {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+#app .app-wrapper .lines-text {
+  font-weight: 800;
+}
+#app .app-wrapper .lines-right {
+  text-align: right;
+}
+#app .app-wrapper .lines-left {
+  text-align: left;
+}
+#app .app-wrapper .lines-content {
+  font-size: 1rem;
+  padding: 0.4rem;
+  display: grid;
+  gap: 0.2rem;
+  text-align: center;
+  border-radius: 5px;
+  grid-template-columns: 1fr 40px 1fr;
+  grid-template-rows: auto;
+}
+#app .app-wrapper .lines-bet {
+  text-align: left;
+}
+#app .app-wrapper .lines-bonus {
+  text-align: center;
+}
+#app .app-wrapper .lines-profit {
+  text-align: right;
+}
+#app .app-wrapper .footer {
+  display: grid;
+  justify-items: center;
+  grid-row-gap: 0.4rem;
+}
+#app .app-wrapper .footer-wrapper {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-column-gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+#app .app-wrapper .footer-wrapper button {
+  padding: 4px 12px;
+  background: #ff0063;
+  color: white;
+  border-radius: 4px;
+  font-size: 1.6rem;
+  font-weight: 800;
+  box-shadow: 0 4px 0px 1px rgba(221, 5, 89, 0.8);
+  transition: all ease-in-out 0.3s;
+}
+#app .app-wrapper .footer-wrapper button:active {
+  transform: translateY(10px);
+  box-shadow: none;
+}
+#app .app-wrapper .footer-wrapper span {
+  font-size: 1.8rem;
+}
+#app .app-wrapper .footer-min {
+  font-size: 1.6rem;
+}
+#app .app-wrapper .footer-decrement {
+  font-size: 1.6rem;
+}
+#app .app-wrapper .footer-bet {
+  text-align: center;
+  width: 8rem;
+}
+#app .app-wrapper .addBall {
+  position: relative;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  align-items: center;
+  font-weight: 800;
+  padding: 3rem;
+  color: #fff;
+  border-radius: 100%;
+  transition: all ease-in-out 0.2s;
+  width: 5rem;
+  height: 5rem;
+  text-align: center;
+  color: #ff0063;
+  background: #f5f5f5;
+  border: 10px solid #ff0063;
+  box-shadow: 0px 4px 0px 0px rgb(190, 0, 59);
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+#app .app-wrapper .addBall:after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 20px;
+  right: 0;
+  bottom: 0;
+  width: 3rem;
+  height: 3rem;
+  z-index: 1;
+  background: url("../images/balls/btn_play-asset.png") center/contain no-repeat;
+}
+#app .app-wrapper .addBall:active {
+  box-shadow: none;
+  outline: none;
+  transform: translateY(5px);
+}
+#app .app-wrapper .addBall:focus {
+  outline: none;
+  box-shadow: none;
 }/*# sourceMappingURL=style.css.map */

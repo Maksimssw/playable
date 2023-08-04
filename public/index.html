@@ -9,13 +9,35 @@
 <body>
     <div id="app">
         <div class="app-wrapper">
-            <header class="header">
-                <span class="content__text">Balance:</span>
-                <span class="content__balance">1000$</span>
-            </header>
+            <img class="app-bg" src="/bg.png" alt="">
+            <img class="logo" src="/logo.png" alt="">
+    
+            
+            <div class="lines">
+                <div class="lines-info">
+                    <span class="lines-span lines-left">Bet</span>
+                    <span class="lines-span">Payout</span>
+                    <span class="lines-span lines-right">Profit</span>
+                </div>
+            </div>
+            <div class=""></div>
             <div id="plinko" style="width: 30rem; height: 25.5rem"></div>
+            
             <footer class="footer">
-                <button class="wrapper__button">Play</button>
+                <div class="addBall">
+                    <div class="">Play</div>
+                </div>
+                <div class="footer-wrapper">
+                    <button class="footer-min">Min</button>
+                    <button class="footer-decrement">-</button>
+                    <span class="footer-bet">Bet $1.0</span>
+                    <button class="footer-increment">+</button>
+                    <button class="footer-max">Max</button>
+                </div>
+                <div class="header">
+                    <span class="header-text">Balance:</span>
+                    <span class="header-balance">1000.0$</span>
+                </header>
             </footer>
             <div class="money"></div>
         </div>

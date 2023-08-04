@@ -67,13 +67,47 @@ export function Plinko(element) {
   /*--------------------------
   Game
   --------------------------*/
-  const balanceText = document.querySelector(".content__balance");
+  const balanceText = document.querySelector(".header-balance");
+  const linesWrapper = document.querySelector(".lines")
+
+  const buttonMin = document.querySelector(".footer-min")
+  const buttonDecrement = document.querySelector(".footer-decrement")
+  const betText = document.querySelector(".footer-bet")
+  const buttonIncrement = document.querySelector(".footer-increment")
+  const buttonMax = document.querySelector(".footer-max")
 
   let radius;
   let gap;
   let mapGap;
   let count = 0;
-  let bet = 10;
+  let bet = 1;
+  const lines = []
+
+  function renderBet() {
+    betText.innerHTML = `Bet $${bet.toFixed(1)}`
+  }
+
+  buttonMin.addEventListener('click', () => {
+    bet = 1
+    renderBet()
+  })
+
+  buttonDecrement.addEventListener('click', () => {
+    if (bet <= 1) return
+    bet -= 1
+    renderBet()
+  })
+
+  buttonIncrement.addEventListener('click', () => {
+    if (bet === 50) return
+    bet += 1
+    renderBet()
+  })
+
+  buttonMax.addEventListener('click', () => {
+    bet = 50.0
+    renderBet()
+  })
 
   function collisionStart(event) {
     const pairs = event.pairs;
@@ -82,7 +116,7 @@ export function Plinko(element) {
       const bodyB = pairs[i].bodyB;
       if (bodyA.label === "point") Splash(bodyA);
       if (bodyA.label === "basket" && bodyB.label === "particle") {
-        balance(bodyA.motion);
+        Balance(bodyA.motion);
         RemoveParticle(bodyB, bodyA);
       }
       if (bodyB.label === "particle" && bodyA.label === "basket-border") {
@@ -99,20 +133,52 @@ export function Plinko(element) {
     });
   }
 
-  function balance(bonus) {
-    const balance = balanceText.textContent.replace(/D/g, "");
-    console.log(balance);
+  function Balance(bonus) {
+    let balance = +balanceText.textContent.replace('$','')
+
+    if (bonus === 0) {
+      balance -= bet
+      balanceText.innerHTML = `${balance.toFixed(2)}$`
+      return
+    }
+
+    const received = bet * bonus
+    const dataBet = {
+      bet: bet,
+      bonus: bonus,
+      profit: received - bet
+    }
+    lines.push(dataBet)
+
+    balanceText.innerHTML = `${(balance + received).toFixed(1)}$`
+
+    const linesContent = document.createElement('div')
+    linesContent.classList.add('lines-content')
+
+    if (lines.length === 4) {
+      const linesFirst = document.querySelector('.lines-content')
+      linesFirst.remove()
+      lines.shift()
+    }
+
+    linesContent.innerHTML = `
+      <span class="lines-text lines-bet">$${dataBet.bet.toFixed(2)}</span>
+      <span class="lines-text lines-bonus">${dataBet.bonus.toFixed(1)}</span>
+      <span class="lines-text lines-profit">${dataBet.profit.toFixed(2)}$</span>
+    `
+
+    linesWrapper.append(linesContent)
   }
 
   function Splash(body) {
     const graphics = new PIXI.Graphics();
-    graphics.beginFill("0xb2de27");
+    graphics.beginFill("#ff0000");
     graphics.drawCircle(
       body.position.x,
       body.position.y,
       body.circleRadius * 2
     );
-    graphics.alpha = 0.2;
+    graphics.alpha = 0.5;
     graphics.zIndex = 1;
     graphics.endFill();
     app.stage.addChild(graphics);
@@ -122,11 +188,10 @@ export function Plinko(element) {
     }, 400);
   }
 
-  function Particle(x, y, r, index) {
+  async function Particle(x, y, r, index) {
     const options = {
-      estitution: 0.3,
-        friction: 0.3,
-        frictionAir: 0.01,
+      restitution: 0.5,
+        frictionAir: 0.006,
         collisionFilter: {
           group: -1,
         },
@@ -138,17 +203,19 @@ export function Plinko(element) {
     Composite.add(engine.world, body);
 
     const color ="FFFFFF";
-    
 
-    const graphics = new PIXI.Graphics();
-    graphics.beginFill(color);
-    graphics.drawCircle(0, 0, r);
-    graphics.endFill();
-    app.stage.addChild(graphics);
+    const textureBasket = await PIXI.Assets.load(
+      require(`@/assets/images/balls/ball.png`)
+    );
+    const basket = PIXI.Sprite.from(textureBasket);
+    basket.width = r * 5
+    basket.height = r * 5
+        basket.anchor.set(0.5)
+    app.stage.addChild(basket);
 
     sceneObjects.push({
       body: body,
-      sprite: graphics,
+      sprite: basket,
     });
   }
 
@@ -217,7 +284,7 @@ export function Plinko(element) {
 
     Composite.add(engine.world, [body, left, right]);
 
-    if (text != undefined) {
+    if (text !== undefined) {
       const textureBasket = await PIXI.Assets.load(
         require(`@/assets/images/boxes/${text}.png`)
       );
@@ -231,12 +298,17 @@ export function Plinko(element) {
     }
   }
 
-  function HollBall() {
+  async function HollBall() {
     const gr = new PIXI.Graphics();
-    gr.beginFill(0x000);
-    gr.drawCircle(width / 2, 20, 10);
-    gr.endFill();
-    app.stage.addChild(gr);
+    const textureBasket = await PIXI.Assets.load(
+      require(`@/assets/images/balls/hole.png`)
+    );
+    const basket = PIXI.Sprite.from(textureBasket);
+    basket.width = radius * 7.5
+    basket.height = radius * 7.5
+    basket.x = width / 2 - basket.width / 2
+
+    app.stage.addChild(basket);
   }
 
   function Border(x, y, side) {
@@ -289,10 +361,10 @@ export function Plinko(element) {
             rows[j - 2]
           );
           if (j === 1) {
-            Border(space + j * gap - radius * mapGap, i * gap + 20, "left");
+            Border(space + j * gap - radius * mapGap, i * gap + 40, "left");
           }
           if (j === col) {
-            Border(space + j * gap - radius * mapGap, i * gap + 20, "right");
+            Border(space + j * gap - radius * mapGap, i * gap + 40, "right");
           }
         }
       }
@@ -303,7 +375,7 @@ export function Plinko(element) {
   function add(offset) {
     const center = width / 2;
     const x = center + offset;
-    const y = 0;
+    const y = 20;
     Particle(x, y, radius + 2, count);
     count += 1;
   }
@@ -321,7 +393,7 @@ export function Plinko(element) {
     map,
     add,
     clear,
-    balance,
+    Balance,
     bet,
   };
 }
