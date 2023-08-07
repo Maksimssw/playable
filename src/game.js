@@ -1,11 +1,11 @@
 import Matter from "matter-js";
 import * as PIXI from "pixi.js";
-
-export function Plinko(element) {
+import { sounds } from "./sounds";
+export function Plinko() {
   /*--------------------------
   Setup
   --------------------------*/
-
+  const element = document.querySelector(".plinko");
   // Matter Modules
   const Engine = Matter.Engine;
   const Runner = Matter.Runner;
@@ -35,12 +35,12 @@ export function Plinko(element) {
 
   const app = new PIXI.Application({
     backgroundAlpha: 0,
-    resizeTo: element,
     width: width,
     height: width,
+    animation: true,
     transparent: true,
-    resolution: window.devicePixelRatio || 1,
     autoDensity: true,
+    resolution: window.devicePixelRatio || 1,
   });
 
   element.appendChild(app.view);
@@ -64,60 +64,74 @@ export function Plinko(element) {
 
   Events.on(engine, "collisionStart", collisionStart);
 
+  engine.gravity.y = 0.9;
+
   /*--------------------------
   Game
   --------------------------*/
   const balanceText = document.querySelector(".header-balance");
-  const linesWrapper = document.querySelector(".lines")
+  const linesWrapper = document.querySelector(".lines");
 
-  const buttonMin = document.querySelector(".footer-min")
-  const buttonDecrement = document.querySelector(".footer-decrement")
-  const betText = document.querySelector(".footer-bet")
-  const buttonIncrement = document.querySelector(".footer-increment")
-  const buttonMax = document.querySelector(".footer-max")
-
+  const buttonMin = document.querySelector(".footer-min");
+  const buttonDecrement = document.querySelector(".footer-decrement");
+  const betText = document.querySelector(".footer-bet");
+  const buttonIncrement = document.querySelector(".footer-increment");
+  const buttonMax = document.querySelector(".footer-max");
+  const winBlock = document.querySelector(".winBlock");
   let radius;
   let gap;
   let mapGap;
   let count = 0;
   let bet = 1;
-  const lines = []
+  const lines = [];
+
+  const convertPrice = (price) => {
+    return price.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
+  };
 
   function renderBet() {
-    betText.innerHTML = `Bet $${bet.toFixed(1)}`
+    betText.innerHTML = `Bet $${bet.toFixed(1)}`;
   }
 
-  buttonMin.addEventListener('click', () => {
-    bet = 1
-    renderBet()
-  })
+  buttonMin.addEventListener("click", () => {
+    bet = 1;
+    renderBet();
+  });
 
-  buttonDecrement.addEventListener('click', () => {
-    if (bet <= 1) return
-    bet -= 1
-    renderBet()
-  })
+  buttonDecrement.addEventListener("click", () => {
+    if (bet <= 1) return;
+    bet -= 1;
+    renderBet();
+  });
 
-  buttonIncrement.addEventListener('click', () => {
-    if (bet === 50) return
-    bet += 1
-    renderBet()
-  })
+  buttonIncrement.addEventListener("click", () => {
+    if (bet === 50) return;
+    bet += 1;
+    renderBet();
+  });
 
-  buttonMax.addEventListener('click', () => {
-    bet = 50.0
-    renderBet()
-  })
+  buttonMax.addEventListener("click", () => {
+    bet = 50.0;
+    renderBet();
+  });
 
   function collisionStart(event) {
     const pairs = event.pairs;
     for (let i = 0; i < pairs.length; i++) {
       const bodyA = pairs[i].bodyA;
       const bodyB = pairs[i].bodyB;
-      if (bodyA.label === "point") Splash(bodyA);
+      if (bodyA.label === "point") {
+        sounds.ball.play();
+        Splash(bodyA);
+      }
       if (bodyA.label === "basket" && bodyB.label === "particle") {
         Balance(bodyA.motion);
         RemoveParticle(bodyB, bodyA);
+
+        sounds.win.play();
       }
       if (bodyB.label === "particle" && bodyA.label === "basket-border") {
         Road(bodyB, bodyA);
@@ -127,58 +141,67 @@ export function Plinko(element) {
 
   function Road(particle, basketBorder) {
     if (particle.index !== basketBorder.index) return;
+
     Body.setVelocity(particle, {
-      x: basketBorder.side === "right" ? -3 : 3,
-      y: 3,
+      x: basketBorder.side === "right" ? -2 : 5,
+      y: 2,
     });
   }
 
   function Balance(bonus) {
-    let balance = +balanceText.textContent.replace('$','')
+    let balance = +balanceText.textContent.replace("$", "");
 
     if (bonus === 0) {
-      balance -= bet
-      balanceText.innerHTML = `${balance.toFixed(2)}$`
-      return
+      balance -= bet;
+      balanceText.innerHTML = `${balance.toFixed(2)}$`;
+      return;
     }
 
-    const received = bet * bonus
+    const received = bet * bonus;
     const dataBet = {
       bet: bet,
       bonus: bonus,
-      profit: received - bet
-    }
-    lines.push(dataBet)
+      profit: received - bet,
+    };
+    lines.push(dataBet);
 
-    balanceText.innerHTML = `${(balance + received).toFixed(1)}$`
+    balanceText.innerHTML = `${(balance + received).toFixed(1)}$`;
 
-    const linesContent = document.createElement('div')
-    linesContent.classList.add('lines-content')
+    const linesContent = document.createElement("div");
 
-    if (lines.length === 4) {
-      const linesFirst = document.querySelector('.lines-content')
-      linesFirst.remove()
-      lines.shift()
+    linesContent.classList.add("lines-content");
+
+    linesContent.classList.add("hide");
+
+    if (lines.length === 7) {
+      const linesFirst = document.querySelector(".lines-content");
+      linesFirst.classList.add("hide");
+      linesFirst.remove();
+      lines.shift();
     }
 
     linesContent.innerHTML = `
-      <span class="lines-text lines-bet">$${dataBet.bet.toFixed(2)}</span>
-      <span class="lines-text lines-bonus">${dataBet.bonus.toFixed(1)}</span>
-      <span class="lines-text lines-profit">${dataBet.profit.toFixed(2)}$</span>
-    `
+      <span class="lines-text lines-bet hide show"><span class="lines-x">x</span>${dataBet.bonus}</span>`;
 
-    linesWrapper.append(linesContent)
+    winBlock.innerText = `Win ${convertPrice(dataBet.profit)}`;
+    winBlock.classList.add("active-bonus");
+    setTimeout(() => {
+      winBlock.classList.remove("active-bonus");
+      linesContent.classList.add("show");
+    }, 100);
+
+    linesWrapper.append(linesContent);
   }
 
   function Splash(body) {
     const graphics = new PIXI.Graphics();
-    graphics.beginFill("#ff0000");
+    graphics.beginFill("#ff0063");
     graphics.drawCircle(
       body.position.x,
       body.position.y,
-      body.circleRadius * 2
+      body.circleRadius * 1.2
     );
-    graphics.alpha = 0.5;
+    graphics.alpha = 0.9;
     graphics.zIndex = 1;
     graphics.endFill();
     app.stage.addChild(graphics);
@@ -190,11 +213,11 @@ export function Plinko(element) {
 
   async function Particle(x, y, r, index) {
     const options = {
-      restitution: 0.5,
-        frictionAir: 0.006,
-        collisionFilter: {
-          group: -1,
-        },
+      restitution: 0.2,
+      frictionAir: 0.004,
+      collisionFilter: {
+        group: -1,
+      },
     };
 
     const body = Bodies.circle(x, y, r, options);
@@ -202,15 +225,13 @@ export function Plinko(element) {
     body.index = index + 2;
     Composite.add(engine.world, body);
 
-    const color ="FFFFFF";
-
     const textureBasket = await PIXI.Assets.load(
       require(`@/assets/images/balls/ball.png`)
     );
     const basket = PIXI.Sprite.from(textureBasket);
-    basket.width = r * 5
-    basket.height = r * 5
-        basket.anchor.set(0.5)
+    basket.width = r * 5;
+    basket.height = r * 5;
+    basket.anchor.set(0.5);
     app.stage.addChild(basket);
 
     sceneObjects.push({
@@ -299,14 +320,14 @@ export function Plinko(element) {
   }
 
   async function HollBall() {
-    const gr = new PIXI.Graphics();
     const textureBasket = await PIXI.Assets.load(
       require(`@/assets/images/balls/hole.png`)
     );
     const basket = PIXI.Sprite.from(textureBasket);
-    basket.width = radius * 7.5
-    basket.height = radius * 7.5
-    basket.x = width / 2 - basket.width / 2
+    basket.width = radius * 7.5;
+    basket.height = radius * 7.5;
+    basket.x = width / 2 - basket.width / 2;
+    basket.y = 45;
 
     app.stage.addChild(basket);
   }
@@ -340,7 +361,7 @@ export function Plinko(element) {
 
   function map(rows) {
     radius = width / rows.length / 8;
-    mapGap = 3;
+    mapGap = 3.3;
     gap = radius * 2 * mapGap;
     HollBall();
 
@@ -351,20 +372,20 @@ export function Plinko(element) {
       const space = (width - gap * col) / 2;
       for (let j = 1; j <= col; j++) {
         if (i < rows.length) {
-          new Point(space + j * gap - radius * mapGap, i * gap + 20, radius);
+          new Point(space + j * gap - radius * mapGap, i * gap + 65, radius);
         } else {
           Basket(
             space + j * gap - radius * mapGap,
-            i * gap + 20,
+            i * gap + 65,
             gap,
             j,
             rows[j - 2]
           );
           if (j === 1) {
-            Border(space + j * gap - radius * mapGap, i * gap + 40, "left");
+            Border(space + j * gap - radius * mapGap, i * gap + 65, "left");
           }
           if (j === col) {
-            Border(space + j * gap - radius * mapGap, i * gap + 40, "right");
+            Border(space + j * gap - radius * mapGap, i * gap + 65, "right");
           }
         }
       }
@@ -375,8 +396,8 @@ export function Plinko(element) {
   function add(offset) {
     const center = width / 2;
     const x = center + offset;
-    const y = 20;
-    Particle(x, y, radius + 2, count);
+    const y = 65;
+    Particle(x, y, radius + 3, count);
     count += 1;
   }
 

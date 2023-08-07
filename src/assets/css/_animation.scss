@@ -1,0 +1,36 @@
+@keyframes backgroundPosition {
+  0% {
+    background-position: 10%;
+  }
+  25% {
+    background-position: 25%;
+  }
+  50% {
+    background-position-y: bottom;
+  }
+  75% {
+    background-position: 75%;
+  }
+  100% {
+    background-position: 100%;
+  }
+}
+
+.bgAnimPos {
+  &:before {
+    animation: backgroundPosition 20s infinite;
+  }
+}
+
+.active-bonus {
+  transform: translateY(10px);
+}
+
+@keyframes ani {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
