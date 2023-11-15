@@ -1,6 +1,5 @@
 import Matter from "matter-js";
 import * as PIXI from "pixi.js";
-import { sounds } from "./sounds";
 export function Plinko() {
   /*--------------------------
   Setup
@@ -34,6 +33,7 @@ export function Plinko() {
   --------------------------*/
 
   const app = new PIXI.Application({
+    view: element,
     backgroundAlpha: 0,
     width: width,
     height: width,
@@ -42,8 +42,6 @@ export function Plinko() {
     autoDensity: true,
     resolution: window.devicePixelRatio || 1,
   });
-
-  element.appendChild(app.view);
 
   /*--------------------------
   Pixi Frame Updates
@@ -64,7 +62,7 @@ export function Plinko() {
 
   Events.on(engine, "collisionStart", collisionStart);
 
-  engine.gravity.y = 0.9;
+  engine.gravity.y = 0.7;
 
   /*--------------------------
   Game
@@ -72,12 +70,9 @@ export function Plinko() {
   const balanceText = document.querySelector(".header-balance");
   const linesWrapper = document.querySelector(".lines");
 
-  const buttonMin = document.querySelector(".footer-min");
-  const buttonDecrement = document.querySelector(".footer-decrement");
   const betText = document.querySelector(".footer-bet");
-  const buttonIncrement = document.querySelector(".footer-increment");
-  const buttonMax = document.querySelector(".footer-max");
   const winBlock = document.querySelector(".winBlock");
+
   let radius;
   let gap;
   let mapGap;
@@ -96,42 +91,21 @@ export function Plinko() {
     betText.innerHTML = `Bet $${bet.toFixed(1)}`;
   }
 
-  buttonMin.addEventListener("click", () => {
-    bet = 1;
-    renderBet();
-  });
-
-  buttonDecrement.addEventListener("click", () => {
-    if (bet <= 1) return;
-    bet -= 1;
-    renderBet();
-  });
-
-  buttonIncrement.addEventListener("click", () => {
-    if (bet === 50) return;
-    bet += 1;
-    renderBet();
-  });
-
-  buttonMax.addEventListener("click", () => {
-    bet = 50.0;
-    renderBet();
-  });
-
   function collisionStart(event) {
     const pairs = event.pairs;
     for (let i = 0; i < pairs.length; i++) {
       const bodyA = pairs[i].bodyA;
       const bodyB = pairs[i].bodyB;
       if (bodyA.label === "point") {
-        sounds.ball.play();
         Splash(bodyA);
+      }
+      if (bodyA.label === 'fund') {
+        console.log(1)
       }
       if (bodyA.label === "basket" && bodyB.label === "particle") {
         Balance(bodyA.motion);
         RemoveParticle(bodyB, bodyA);
 
-        sounds.win.play();
       }
       if (bodyB.label === "particle" && bodyA.label === "basket-border") {
         Road(bodyB, bodyA);
@@ -183,7 +157,7 @@ export function Plinko() {
     linesContent.innerHTML = `
       <span class="lines-text lines-bet hide show"><span class="lines-x">x</span>${dataBet.bonus}</span>`;
 
-    winBlock.innerText = `Win ${convertPrice(dataBet.profit)}`;
+    winBlock.innerText = `Win $${dataBet.profit}`;
     winBlock.classList.add("active-bonus");
     setTimeout(() => {
       winBlock.classList.remove("active-bonus");
@@ -211,6 +185,101 @@ export function Plinko() {
     }, 400);
   }
 
+  const linesRow = []
+  async function LinesTwo() {
+    const options = {
+      isStatic: true
+    }
+
+    const line = await PIXI.Assets.load(
+      require('@/assets/images/line.png')
+    )
+
+    const sprite = PIXI.Sprite.from(line)
+    sprite.width = radius * 25
+    sprite.height = radius * 4
+    sprite.x = width / 2 + sprite.width / 2;
+    sprite.y = radius * 11
+    sprite.rotation = -45
+    sprite.zIndex = 10
+
+    const wrapper = Bodies.rectangle(sprite.x, sprite.y, sprite.width, radius, options)
+    wrapper.label = 'wrapperTwo'
+    wrapper.rotation = -45
+
+    Composite.add(engine.world, wrapper);
+    app.stage.addChild(sprite);
+    linesRow.push(wrapper)
+  }
+
+  async function Lines() {
+    const options = {
+      isStatic: true
+    }
+
+    const line = await PIXI.Assets.load(
+      require('@/assets/images/line.png')
+    )
+
+    const sprite = PIXI.Sprite.from(line)
+    sprite.width = radius * 25
+    sprite.height = radius * 4
+    sprite.x = width / 2 - sprite.width / 1;
+    sprite.y = radius * -10
+    sprite.rotation = 45
+    sprite.zIndex = 10
+
+    const wrapper = Bodies.rectangle(sprite.x, sprite.y, sprite.width, radius, options)
+    wrapper.label = 'wrapper'
+    wrapper.rotation = 45
+
+    Composite.add(engine.world, wrapper);
+    app.stage.addChild(sprite);
+    linesRow.push(wrapper)
+  }
+
+  async function Lever() {
+    const options = {
+      isStatic: true
+    }
+
+    const textureKey = await PIXI.Assets.load(
+      require(`@/assets/images/key.png`)
+    );
+   
+    const body = PIXI.Sprite.from(textureKey);
+    body.width = radius * 40;
+    body.height = radius * 7;
+    body.x = width / 2 - body.width / 2;
+    body.y = radius * 10;
+
+    const fund = Bodies.rectangle(body.x, body.y + radius, body.width, radius, options)
+    fund.label = 'fund'
+    Composite.add(engine.world, fund);
+
+    const graphics = new PIXI.Graphics();
+    graphics.beginFill(0);
+    graphics.drawRect(body.x, body.y, body.width, body.height);
+    graphics.zIndex = -1;
+    graphics.endFill();
+    graphics.interactive = true
+    app.stage.addChild(graphics);
+      
+
+    graphics.on('touchmove', function(e) {
+      body.x = e.data.global.x
+      fund.x = e.data.global.x
+      
+      console.log(linesRow)
+
+      if (body.x > hollBall.x + hollBall.width / 2) {
+        fund.parent.isStatic = false
+      }
+    })
+
+    app.stage.addChild(body);
+  }
+
   async function Particle(x, y, r, index) {
     const options = {
       restitution: 0.2,
@@ -229,8 +298,16 @@ export function Plinko() {
       require(`@/assets/images/balls/ball.png`)
     );
     const basket = PIXI.Sprite.from(textureBasket);
-    basket.width = r * 5;
-    basket.height = r * 5;
+    basket.width = 1
+    basket.height = 1
+
+    const timer = setInterval(() => {
+      if (basket.width >= r * 5) clearInterval(timer)
+
+      basket.width += 2
+      basket.height += 2
+    }, 10)
+
     basket.anchor.set(0.5);
     app.stage.addChild(basket);
 
@@ -238,6 +315,7 @@ export function Plinko() {
       body: body,
       sprite: basket,
     });
+
   }
 
   function Point(x, y, r) {
@@ -319,6 +397,7 @@ export function Plinko() {
     }
   }
 
+  let hollBall;
   async function HollBall() {
     const textureBasket = await PIXI.Assets.load(
       require(`@/assets/images/balls/hole.png`)
@@ -327,9 +406,10 @@ export function Plinko() {
     basket.width = radius * 7.5;
     basket.height = radius * 7.5;
     basket.x = width / 2 - basket.width / 2;
-    basket.y = 45;
+    basket.y = 0;
 
     app.stage.addChild(basket);
+    hollBall = basket
   }
 
   function Border(x, y, side) {
@@ -363,7 +443,10 @@ export function Plinko() {
     radius = width / rows.length / 8;
     mapGap = 3.3;
     gap = radius * 2 * mapGap;
-    HollBall();
+    HollBall()
+    Lever()
+    Lines()
+    LinesTwo()
 
     let col = 3;
     const increment = 1;
@@ -372,20 +455,20 @@ export function Plinko() {
       const space = (width - gap * col) / 2;
       for (let j = 1; j <= col; j++) {
         if (i < rows.length) {
-          new Point(space + j * gap - radius * mapGap, i * gap + 65, radius);
+          new Point(space + j * gap - radius * mapGap, i * gap + 40, radius);
         } else {
           Basket(
             space + j * gap - radius * mapGap,
-            i * gap + 65,
+            i * gap + 40,
             gap,
             j,
             rows[j - 2]
           );
           if (j === 1) {
-            Border(space + j * gap - radius * mapGap, i * gap + 65, "left");
+            Border(space + j * gap - radius * mapGap, i * gap + 40, "left");
           }
           if (j === col) {
-            Border(space + j * gap - radius * mapGap, i * gap + 65, "right");
+            Border(space + j * gap - radius * mapGap, i * gap + 40, "right");
           }
         }
       }
@@ -396,7 +479,7 @@ export function Plinko() {
   function add(offset) {
     const center = width / 2;
     const x = center + offset;
-    const y = 65;
+    const y = 0;
     Particle(x, y, radius + 3, count);
     count += 1;
   }
@@ -415,6 +498,7 @@ export function Plinko() {
     add,
     clear,
     Balance,
+    Lever,
     bet,
   };
 }
