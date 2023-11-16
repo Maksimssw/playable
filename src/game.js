@@ -12,6 +12,7 @@ export function Plinko() {
   const Body = Matter.Body;
   const Composite = Matter.Composite;
   const Events = Matter.Events;
+  const World = Matter.World;
 
   // Scene Container
   const width = element.offsetWidth;
@@ -72,6 +73,7 @@ export function Plinko() {
 
   const betText = document.querySelector(".footer-bet");
   const winBlock = document.querySelector(".winBlock");
+  const modal = document.querySelector('.modal')
 
   let radius;
   let gap;
@@ -185,7 +187,7 @@ export function Plinko() {
     }, 400);
   }
 
-  const linesRow = []
+  let linesRow
   async function LinesTwo() {
     const options = {
       isStatic: true
@@ -203,13 +205,12 @@ export function Plinko() {
     sprite.rotation = -45
     sprite.zIndex = 10
 
-    const wrapper = Bodies.rectangle(sprite.x, sprite.y, sprite.width, radius, options)
-    wrapper.label = 'wrapperTwo'
-    wrapper.rotation = -45
+    linesRow = Bodies.rectangle(sprite.x, sprite.y, sprite.width, sprite.height, options)
+    linesRow.label = 'wrapperTwo'
+    linesRow.rotation = -45
 
-    Composite.add(engine.world, wrapper);
+    Composite.add(engine.world, linesRow);
     app.stage.addChild(sprite);
-    linesRow.push(wrapper)
   }
 
   async function Lines() {
@@ -235,7 +236,6 @@ export function Plinko() {
 
     Composite.add(engine.world, wrapper);
     app.stage.addChild(sprite);
-    linesRow.push(wrapper)
   }
 
   async function Lever() {
@@ -258,8 +258,8 @@ export function Plinko() {
     Composite.add(engine.world, fund);
 
     const graphics = new PIXI.Graphics();
-    graphics.beginFill(0);
-    graphics.drawRect(body.x, body.y, body.width, body.height);
+    graphics.beginFill(0, 0.01);
+    graphics.drawRect(body.x, body.y, width, body.height);
     graphics.zIndex = -1;
     graphics.endFill();
     graphics.interactive = true
@@ -269,11 +269,10 @@ export function Plinko() {
     graphics.on('touchmove', function(e) {
       body.x = e.data.global.x
       fund.x = e.data.global.x
-      
-      console.log(linesRow)
 
       if (body.x > hollBall.x + hollBall.width / 2) {
         fund.parent.isStatic = false
+        World.remove(engine.world, linesRow)
       }
     })
 
@@ -429,13 +428,19 @@ export function Plinko() {
     Composite.add(engine.world, border);
   }
 
+  let indexRemoveParticle = 0
   function RemoveParticle(body) {
     for (let i = 0; i < sceneObjects.length; i++) {
       if (sceneObjects[i].body.id === body.id) {
         Composite.remove(engine.world, sceneObjects[i].body);
         app.stage.removeChild(sceneObjects[i].sprite);
         sceneObjects.splice(i, 1);
+        ++indexRemoveParticle
       }
+    }
+
+    if (indexRemoveParticle === 6) {
+      modal.classList.add('modal_active')
     }
   }
 

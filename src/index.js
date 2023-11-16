@@ -1,6 +1,7 @@
 import { Plinko } from "./game";
 import "./assets/fonts/fonts.css";
 import "./assets/css/style.css";
+import "./assets/css/index.css";
 
 const launch = () => {
   const basket = [410, 260, 210, 83, 24, 11, 24, 83, 210, 260, 410];

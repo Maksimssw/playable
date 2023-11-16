@@ -1,0 +1,4 @@
+#app .app-wrapper_column {
+    grid-template-columns: 1fr;
+    justify-content: center;
+}
