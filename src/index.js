@@ -9,14 +9,11 @@ const launch = () => {
 
   plinko.map(basket);
 
-  let index = 0
-  const createAdd = setInterval(() => {
-    if (index === 6) clearInterval(createAdd)
-    index += 1
+  for (let i = 0; i < 7; i++) {
     plinko.Balance(0);
     const random = (Math.random() * (1.3 - 0.8) + 0.8).toFixed(1);
     plinko.add(+random);
-  }, 400)
+  }
 
  
   let ipad = false
@@ -44,8 +41,8 @@ const launch = () => {
     }
 
     if (ipad) {
-      canvas.style.width = 22 + 'rem'
-      canvas.style.height = 20 + 'rem'
+      canvas.style.width = 20 + 'rem'
+      canvas.style.height = 24 + 'rem'
     }
   }
 

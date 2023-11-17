@@ -190,7 +190,11 @@ export function Plinko() {
   let linesRow
   async function LinesTwo() {
     const options = {
-      isStatic: true
+      isStatic: false,
+      gate: true,
+      render: {
+        fillStyle: 'red',
+      }
     }
 
     const line = await PIXI.Assets.load(
@@ -201,12 +205,13 @@ export function Plinko() {
     sprite.width = radius * 25
     sprite.height = radius * 4
     sprite.x = width / 2 + sprite.width / 2;
-    sprite.y = radius * 11
+    sprite.y = radius > 5 ? radius * 7.5 : radius * 12;
     sprite.rotation = -45
-    sprite.zIndex = 10
+    sprite.zIndex = -1
 
     linesRow = Bodies.rectangle(sprite.x, sprite.y, sprite.width, sprite.height, options)
     linesRow.label = 'wrapperTwo'
+    linesRow.fillStyle = '#000'
     linesRow.rotation = -45
 
     Composite.add(engine.world, linesRow);
@@ -215,7 +220,12 @@ export function Plinko() {
 
   async function Lines() {
     const options = {
-      isStatic: true
+      isStatic: false,
+      render: {
+        fillStyle: 'red',
+        strokeStyle: 'blue',
+        lineWidth: 3
+      }
     }
 
     const line = await PIXI.Assets.load(
@@ -226,9 +236,11 @@ export function Plinko() {
     sprite.width = radius * 25
     sprite.height = radius * 4
     sprite.x = width / 2 - sprite.width / 1;
-    sprite.y = radius * -10
+    sprite.y = radius > 5 ? radius.toFixed(0) * -14 : radius * -9;
     sprite.rotation = 45
     sprite.zIndex = 10
+    console.log(sprite.y)
+  
 
     const wrapper = Bodies.rectangle(sprite.x, sprite.y, sprite.width, radius, options)
     wrapper.label = 'wrapper'
@@ -240,7 +252,7 @@ export function Plinko() {
 
   async function Lever() {
     const options = {
-      isStatic: true
+      isStatic: true,
     }
 
     const textureKey = await PIXI.Assets.load(
@@ -251,10 +263,11 @@ export function Plinko() {
     body.width = radius * 40;
     body.height = radius * 7;
     body.x = width / 2 - body.width / 2;
-    body.y = radius * 10;
+    body.y = radius > 5 ? radius * 5 : radius * 10;
 
-    const fund = Bodies.rectangle(body.x, body.y + radius, body.width, radius, options)
+    const fund = Bodies.rectangle(body.x, body.y + radius + 10, width, radius * 2.5, options)
     fund.label = 'fund'
+    fund.index = 10
     Composite.add(engine.world, fund);
 
     const graphics = new PIXI.Graphics();
@@ -272,7 +285,7 @@ export function Plinko() {
 
       if (body.x > hollBall.x + hollBall.width / 2) {
         fund.parent.isStatic = false
-        World.remove(engine.world, linesRow)
+        // World.remove(engine.world, linesRow)
       }
     })
 
@@ -401,11 +414,12 @@ export function Plinko() {
     const textureBasket = await PIXI.Assets.load(
       require(`@/assets/images/balls/hole.png`)
     );
-    const basket = PIXI.Sprite.from(textureBasket);
+    const basket = new PIXI.Graphics();
     basket.width = radius * 7.5;
     basket.height = radius * 7.5;
     basket.x = width / 2 - basket.width / 2;
     basket.y = 0;
+    basket.zIndex = -1
 
     app.stage.addChild(basket);
     hollBall = basket
@@ -485,7 +499,7 @@ export function Plinko() {
     const center = width / 2;
     const x = center + offset;
     const y = 0;
-    Particle(x, y, radius + 3, count);
+    Particle(x, y, radius + 2, count);
     count += 1;
   }
 

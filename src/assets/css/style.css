@@ -406,7 +406,7 @@ body {
   box-shadow: none;
 }
 #app .app-wrapper_column {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0;
   grid-gap: 0;
   align-items: flex-end;
@@ -531,6 +531,17 @@ body {
   box-shadow: 1px 1px 20px 4px #e8d18e;
   z-index: 1;
   padding-bottom: 0.8rem;
+  overflow: hidden;
+}
+.modal-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: -1;
 }
 .modal-wrapper::after {
   content: "";
@@ -552,6 +563,7 @@ body {
 }
 .modal-headline h2 {
   font-size: 2rem;
+  z-index: 3;
 }
 .modal-body {
   padding: 1rem 1rem;
@@ -560,6 +572,7 @@ body {
   display: block;
   margin-bottom: 4px;
   text-align: center;
+  z-index: 3;
 }
 .modal span {
   color: gold;
@@ -573,6 +586,7 @@ body {
   text-align: center;
   font-size: 1.4rem;
   font-weight: 700;
+  z-index: 3;
 }
 .modal .modal-content {
   display: grid;
@@ -592,6 +606,7 @@ body {
   text-transform: uppercase;
   font-weight: 800;
   overflow: hidden;
+  z-index: 3;
 }
 .modal-button::after {
   content: "";
