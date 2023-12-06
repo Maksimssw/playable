@@ -1,24 +1,15 @@
 @font-face {
-    font-family: 'Roboto';
+    font-family: 'EuclidCircularA';
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url('@/assets/fonts/Roboto-Regular.woff') format('woff')
+    src: url('EuclidCircular-A-Regular.woff') format('woff')
 }
 
 @font-face {
-    font-family: 'Roboto';
+    font-family: 'EuclidCircularA';
     font-style: normal;
-    font-weight: 500;
+    font-weight: 600;
     font-display: swap;
-    src: url('@/assets/fonts/Roboto-Regular.woff') format('woff')
-}
-
-
-@font-face {
-    font-family: 'Roboto';
-    font-style: normal;
-    font-weight: 700;
-    font-display: swap;
-    src: url('@/assets/fonts/Roboto-Regular.woff') format('woff')
+    src: url('EuclidCircular-A-SemiBold.woff') format('woff')
 }

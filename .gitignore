@@ -2,6 +2,7 @@
 .gulp
 .idea
 .vscode
+.idea
 
 # Node
 node_modules

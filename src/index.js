@@ -1,91 +1,47 @@
-import { Plinko } from "./game";
-import "./assets/fonts/fonts.css";
-import "./assets/css/style.css";
-import "./assets/css/index.css";
-
-const launch = () => {
-  const basket = [410, 260, 210, 83, 24, 11, 24, 83, 210, 260, 410];
-  const plinko = Plinko();
-
-  plinko.map(basket);
-
-  for (let i = 0; i < 7; i++) {
-    plinko.Balance(0);
-    const random = (Math.random() * (1.3 - 0.8) + 0.8).toFixed(1);
-    plinko.add(+random);
-  }
-
- 
-  let ipad = false
-  let minTel = false
-
-  const appWrapper = document.querySelector('.app-wrapper')
-  const canvas = appWrapper.querySelector('.plinko')
-
-  const sizeCanvas = (boolean) => {
-    if (minTel) {
-      canvas.style.width = 14 + 'rem'
-      canvas.style.height = 14 + 'rem'
-      return
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("./assets/fonts/fonts.css");
+require("./assets/css/style.css");
+require("./assets/css/index.css");
+var sliderWrapper = document.querySelector('.slider__wrapper');
+var sliderItem = document.querySelectorAll('.slider__item');
+var widthItem = sliderWrapper.offsetWidth / 3;
+var scrollX = 0;
+var scrollI = 0;
+sliderItem.forEach(function (item) {
+    item.style.width = widthItem + 'px';
+    var answers = item.querySelectorAll('.answers__item');
+    answers.forEach(function (answer) {
+        answer.addEventListener('click', function () {
+            answerHandler(answer, item);
+        });
+    });
+});
+var answerHandler = function (answer, item) {
+    answer.classList.add('answers__item_click');
+    var value = answer.textContent;
+    setTimeout(function () {
+        answer.classList.remove('answers__item_click');
+        if (isNextSlider) {
+            scrollI += 1;
+            scrollX += widthItem;
+            nextSlider(item);
+        }
+    }, 500);
+    var isNextSlider;
+    if (value) {
+        if (value === 'Зеленый' ||
+            value === 'Обгон запрещен' ||
+            value === '60 км/ч') {
+            answer.classList.add('answers__item_true');
+            isNextSlider = true;
+        }
+        else {
+            answer.classList.add('answers__item_false');
+            isNextSlider = false;
+        }
     }
-
-    if (boolean) {
-      canvas.style.width = 32 + 'rem'
-      canvas.style.height = 29.5 + 'rem'
-      
-      appWrapper.classList.remove('app-wrapper-ipad')
-    } else {
-      canvas.style.width = 38 + 'rem'
-      canvas.style.height = 36 + 'rem'
-      if (ipad) appWrapper.classList.add('app-wrapper-ipad')
-    }
-
-    if (ipad) {
-      canvas.style.width = 20 + 'rem'
-      canvas.style.height = 24 + 'rem'
-    }
-  }
-
-  const turnTel = (size) => {
-    const width = size.width
-    const height = size.height
-
-    if (width <= 230 || height <= 230) {
-      minTel = true
-      appWrapper.classList.add('.app-wrapper-min')
-    } else {
-      minTel = false
-      appWrapper.classList.remove('.app-wrapper-min')
-    }
-
-    width > 700 ? ipad = true : false
-
-    if (width > height) {
-      appWrapper.classList.add('app-wrapper_column')
-      sizeCanvas(true)
-    } else {
-      appWrapper.classList.remove('app-wrapper_column')
-      sizeCanvas(true)
-    }
-
-    if (width <= 470) {
-      canvas.style.width = 27 + 'rem'
-      canvas.style.height = 24 + 'rem'
-    }
-  }
-
-  turnTel({
-    width: window.innerWidth,
-    height: window.innerHeight
-  })
-
-  window.addEventListener("orientationchange", (event) => {
-    setTimeout(() => {
-      turnTel({
-        width: window.innerWidth,
-        height: window.innerHeight
-      })
-    }, 10)
-  });
 };
-launch()
+var nextSlider = function (item) {
+    sliderWrapper.style.transform = "translateX(-".concat(scrollX, "px)");
+};
