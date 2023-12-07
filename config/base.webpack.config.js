@@ -75,7 +75,7 @@ module.exports = {
         test: /\.(png|jpe?g|gif|webp)$/,
         type: "asset/inline",
       },
-      // Videos, Sounds
+      // Videos, sounds
       {
         test: /\.(mp4|mp3)$/,
         type: "asset/inline",

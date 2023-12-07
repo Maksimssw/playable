@@ -10,7 +10,10 @@
     "deploy-only": "node ftp-deploy"
   },
   "dependencies": {
-    "swiper": "^11.0.5"
+    "@types/howler": "^2.2.11",
+    "howler": "^2.2.4",
+    "swiper": "^11.0.5",
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.18.5",
