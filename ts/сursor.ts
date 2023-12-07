@@ -1,12 +1,20 @@
-const cursorBtn = document.querySelector('.cursor') as HTMLLIElement
-const cursor = document.querySelector('.cursor-img') as HTMLImageElement
+const cursor = document.querySelector('.cursor-img') as HTMLLIElement
 
-const coord = cursorBtn.getBoundingClientRect();
-console.log(coord)
+const cursorCordHandler = (x: number, y: number) => {
+  cursor.style.left = x + 'px'
+  cursor.style.top = y + 'px'
+}
 
-cursor.style.top = coord.top + coord.height / 2 - (cursor.offsetHeight / 4) + 'px'
-cursor.style.left = coord.left + coord.width / 2 + (cursor.offsetWidth / 2) + 'px'
+window.addEventListener('touchstart', (event) => {
+  cursor.classList.add('cursor_click')
 
-cursorBtn.addEventListener('click', () => {
-  cursor.style.display = 'none'
+  cursorCordHandler(event.touches[0].clientX, event.touches[0].clientY)
+})
+
+window.addEventListener('touchmove', (event) => {
+  cursor.classList.add('cursor_click')
+})
+
+window.addEventListener('touchend', (event) => {
+  cursor.classList.remove('cursor_click')
 })

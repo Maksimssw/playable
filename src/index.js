@@ -8,11 +8,7 @@ require("./assets/css/style.css");
 require("./assets/css/index.css");
 var slider_1 = __importDefault(require("./slider"));
 var sound_1 = require("./sound");
-var context;
-window.onload = function () {
-    context = new AudioContext();
-};
-document.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('DOMContentLoaded', function () {
     sound_1.bg.play();
     (0, slider_1.default)();
 });

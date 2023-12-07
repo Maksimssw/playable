@@ -4,12 +4,7 @@ import "./assets/css/index.css";
 import sliderPlay from "./slider";
 import {bg} from "./sound";
 
-let context;
-window.onload = function() {
-  context = new AudioContext()
-}
-
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
   bg.play()
 
   sliderPlay()
