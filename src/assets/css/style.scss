@@ -45,9 +45,9 @@ img {
   max-width: 100%;
   height: auto;
   -o-object-fit: cover;
-  object-fit: cover;
+     object-fit: cover;
   -o-object-position: center;
-  object-position: center;
+     object-position: center;
 }
 
 svg {
@@ -428,23 +428,17 @@ input {
   left: 0;
   top: 0;
   height: 100px;
-  animation: cursorAnim 2s infinite;
   z-index: 3;
+  transition: 0.3s all;
+  transform: translate(0, 0);
+  scale: 1;
+  rotate: 0;
+  opacity: 0;
 }
 
-@keyframes cursorAnim {
-  0% {
-    scale: 1;
-    rotate: 0;
-  }
-
-  50% {
-    scale: 0.7;
-    rotate: -15deg;
-  }
-
-  100% {
-    scale: 1;
-    rotate: 0;
-  }
+.cursor_click {
+  scale: 0.7;
+  rotate: -15deg;
+  transform: translate(30px, -35px);
+  opacity: 1;
 }

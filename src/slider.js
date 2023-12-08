@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var sound_1 = require("./sound");
 require("./\u0441ursor");
 var sliderPlay = function () {
     var slider = document.querySelector('.slider');
@@ -7,6 +8,7 @@ var sliderPlay = function () {
     var sliderItem = slider.querySelectorAll('.slider__item');
     var winsWrapper = document.querySelector('.wins');
     var widthItem = sliderWrapper.offsetWidth / 3;
+    console.log(widthItem);
     var scrollX = 0;
     var scrollI = 0;
     sliderItem.forEach(function (item) {
@@ -35,12 +37,15 @@ var sliderPlay = function () {
         if (value === 'Зеленый' ||
             value === 'Обгон запрещен' ||
             value === '60 км/ч') {
+            sound_1.click.play();
+            sound_1.coins.play();
             answer.classList.add('answers__item_true');
             isNextSlider = true;
         }
         else {
             answer.classList.add('answers__item_false');
             isNextSlider = false;
+            sound_1.wrong.play();
         }
     };
     var nextSlider = function () {
@@ -65,6 +70,7 @@ var sliderPlay = function () {
             winsWrapper.classList.add('wins_free');
             coin.classList.add('coin_free');
             slider.classList.add('slider_up');
+            sound_1.success.play();
             setTimeout(function () {
                 headline.classList.add('wins__headline_vis');
                 content.classList.add('wins__content_vis');

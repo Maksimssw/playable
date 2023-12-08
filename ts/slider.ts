@@ -1,3 +1,4 @@
+import { click, coins, success, wrong } from "./sound"
 import "./сursor"
 
 const sliderPlay = () => {
@@ -8,6 +9,8 @@ const sliderPlay = () => {
   const winsWrapper = document.querySelector('.wins') as HTMLDivElement
 
   const widthItem: number = sliderWrapper.offsetWidth / 3
+
+  console.log(widthItem)
   let scrollX: number = 0
   let scrollI: number = 0
 
@@ -45,11 +48,15 @@ const sliderPlay = () => {
       value === 'Обгон запрещен' ||
       value === '60 км/ч'
     ) {
+      click.play()
+      coins.play()
+
       answer.classList.add('answers__item_true')
       isNextSlider = true
     } else {
       answer.classList.add('answers__item_false')
       isNextSlider = false
+      wrong.play()
     }
   }
 
@@ -81,6 +88,7 @@ const sliderPlay = () => {
       winsWrapper.classList.add('wins_free')
       coin.classList.add('coin_free')
       slider.classList.add('slider_up')
+      success.play()
 
       setTimeout(() => {
         headline.classList.add('wins__headline_vis')
